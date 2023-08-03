@@ -1,6 +1,5 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-const { default: Choices } = require('inquirer/lib/objects/choices');
 
 const mysql = require('mysql2');
 
@@ -35,6 +34,14 @@ const addEmployeeQuestions = [
         message: "Enter the employee's manager ID (leave empty if none):",
         name: 'manager_id',
     },
+]
+
+const addDepartmentQuestion = [
+    {
+        type: 'input',
+        message: 'Enter the name of the new department:',
+        name: 'departmentName',
+    }
 ]
 
 // Connect to employee_db
@@ -73,6 +80,9 @@ function init() {
             case 'add an employee':
                 addEmployee();
                 break;
+            case 'add a department':
+                addDepartment();
+                break;
         }
     });
 }
@@ -85,6 +95,18 @@ function addEmployee() {
         db.query(query, [first_name, last_name, role_id, manager_id], function (err, results) {
             if (err) throw err;
             console.log('Employee added successfully!');
+            init();
+        });
+    });
+}
+
+function addDepartment() {
+    inquirer.prompt(addDepartmentQuestion).then((answer) => {
+        const { departmentName } = answer;
+
+        db.query('INSERT INTO department (name) VALUES (?)', [departmentName], function (err, results) {
+            if (err) throw err;
+            console.log('Department added successfully!');
             init();
         });
     });
