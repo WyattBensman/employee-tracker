@@ -44,6 +44,37 @@ const addDepartmentQuestion = [
     }
 ]
 
+const addRoleQuestions = [
+    {
+        type: 'input',
+        message: "Enter the title of the new role:",
+        name: 'title',
+    },
+    {
+        type: 'input',
+        message: "Enter the salary for the new role:",
+        name: 'salary',
+    },
+    {
+        type: 'input',
+        message: "Enter the department ID for the new role:",
+        name: 'department_id',
+    },
+];
+
+const updateEmployeeRoleQuestions = [
+    {
+        type: 'input',
+        message: "Enter the ID of the employee you want to update:",
+        name: 'employee_id',
+    },
+    {
+        type: 'input',
+        message: "Enter the new role ID for the employee:",
+        name: 'new_role_id',
+    },
+];
+
 // Connect to employee_db
 const db = mysql.createConnection(
     {
@@ -83,6 +114,12 @@ function init() {
             case 'add a department':
                 addDepartment();
                 break;
+            case 'add a role':
+                addRole();
+                break;
+            case 'update an employee role':
+                updateEmployeeRole();
+                break;
         }
     });
 }
@@ -107,6 +144,32 @@ function addDepartment() {
         db.query('INSERT INTO department (name) VALUES (?)', [departmentName], function (err, results) {
             if (err) throw err;
             console.log('Department added successfully!');
+            init();
+        });
+    });
+}
+
+function addRole() {
+    inquirer.prompt(addRoleQuestions).then((answers) => {
+        const { title, salary, department_id } = answers;
+        const query = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+
+        db.query(query, [title, salary, department_id], function (err, results) {
+            if (err) throw err;
+            console.log('Role added successfully!');
+            init();
+        });
+    });
+}
+
+function updateEmployeeRole() {
+    inquirer.prompt(updateEmployeeRoleQuestions).then((answers) => {
+        const { employee_id, new_role_id } = answers;
+        const query = 'UPDATE employee SET role_id = ? WHERE id = ?';
+
+        db.query(query, [new_role_id, employee_id], function (err, results) {
+            if (err) throw err;
+            console.log('Employee role updated successfully!');
             init();
         });
     });
