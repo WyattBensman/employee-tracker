@@ -8,8 +8,8 @@ const mysql = require('mysql2');
 const questions = [
     {
         type: 'list',
-        message: 'What would you like to do today?',
-        name: 'allOptions',
+        message: 'What would you like to do?',
+        name: 'selectedOption',
         choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
     }
 ]
@@ -28,15 +28,21 @@ const db = mysql.createConnection(
 // Function to prompt questions & return appropriate response
 function init() {
     inquirer.prompt(questions).then((answer) => {
-        switch (answer) {
+        switch (answer.selectedOption) {
             case 'view all departments':
-                console.table()
+                db.query('SELECT * FROM department', function (err, results) {
+                    console.table(results);
+                });
                 break;
             case 'view all roles':
-                console.table()
+                db.query('SELECT * FROM role', function (err, results) {
+                    console.table(results);
+                });
                 break;
             case 'view all employees':
-                console.table()
+                db.query('SELECT * FROM employee', function (err, results) {
+                    console.table(results);
+                });
                 break;
         }
     });
