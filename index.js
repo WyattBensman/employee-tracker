@@ -5,7 +5,7 @@ const { default: Choices } = require('inquirer/lib/objects/choices');
 const mysql = require('mysql2');
 
 // Inquirer Questions
-const questions = [
+const initialQuestion = [
     {
         type: 'list',
         message: 'What would you like to do?',
@@ -27,21 +27,24 @@ const db = mysql.createConnection(
 
 // Function to prompt questions & return appropriate response
 function init() {
-    inquirer.prompt(questions).then((answer) => {
+    inquirer.prompt(initialQuestion).then((answer) => {
         switch (answer.selectedOption) {
             case 'view all departments':
                 db.query('SELECT * FROM department', function (err, results) {
                     console.table(results);
+                    init();
                 });
                 break;
             case 'view all roles':
                 db.query('SELECT * FROM role', function (err, results) {
                     console.table(results);
+                    init();
                 });
                 break;
             case 'view all employees':
                 db.query('SELECT * FROM employee', function (err, results) {
                     console.table(results);
+                    init();
                 });
                 break;
         }
