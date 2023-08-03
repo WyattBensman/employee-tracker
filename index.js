@@ -14,6 +14,29 @@ const initialQuestion = [
     }
 ]
 
+const addEmployeeQuestions = [
+    {
+        type: 'input',
+        message: "Enter the employee's first name:",
+        name: 'first_name',
+    },
+    {
+        type: 'input',
+        message: "Enter the employee's last name:",
+        name: 'last_name',
+    },
+    {
+        type: 'input',
+        message: "Enter the employee's role ID:",
+        name: 'role_id',
+    },
+    {
+        type: 'input',
+        message: "Enter the employee's manager ID (leave empty if none):",
+        name: 'manager_id',
+    },
+]
+
 // Connect to employee_db
 const db = mysql.createConnection(
     {
@@ -47,7 +70,23 @@ function init() {
                     init();
                 });
                 break;
+            case 'add an employee':
+                addEmployee();
+                break;
         }
+    });
+}
+
+function addEmployee() {
+    inquirer.prompt(addEmployeeQuestions).then((answers) => {
+        const { first_name, last_name, role_id, manager_id } = answers;
+        const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+
+        db.query(query, [first_name, last_name, role_id, manager_id], function (err, results) {
+            if (err) throw err;
+            console.log('Employee added successfully!');
+            init();
+        });
     });
 }
 
